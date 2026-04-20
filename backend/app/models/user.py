@@ -21,3 +21,4 @@ class User(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     tenant: Mapped["Tenant"] = relationship("Tenant", back_populates="users")
+    uploaded_documents: Mapped[list["KBDocument"]] = relationship("KBDocument", back_populates="uploaded_by")
