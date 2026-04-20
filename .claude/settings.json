@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx shadcn@latest init --defaults --yes)",
+      "Bash(npx shadcn@latest add badge card dialog table tabs progress separator avatar dropdown-menu sheet tooltip --yes)"
+    ]
+  }
+}

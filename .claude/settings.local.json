@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/sahaa/OneDrive/Desktop/ARIA/**)",
+      "Bash(npm --version)",
+      "Bash(npx create-next-app@latest frontend --typescript --tailwind --eslint --app --no-src-dir --import-alias \"@/*\" --no-git --yes)",
+      "Bash(python -m uvicorn --version)",
+      "Bash(curl -s http://localhost:8001/health)"
+    ]
+  }
+}
