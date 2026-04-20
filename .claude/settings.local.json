@@ -5,7 +5,11 @@
       "Bash(npm --version)",
       "Bash(npx create-next-app@latest frontend --typescript --tailwind --eslint --app --no-src-dir --import-alias \"@/*\" --no-git --yes)",
       "Bash(python -m uvicorn --version)",
-      "Bash(curl -s http://localhost:8001/health)"
+      "Bash(curl -s http://localhost:8001/health)",
+      "Bash(curl -s http://localhost:8001/openapi.json)",
+      "Bash(python -c \"import sys,json; routes=[r['summary'] for p,methods in json.load\\(sys.stdin\\)['paths'].items\\(\\) for m,r in methods.items\\(\\)]; print\\('\\\\n'.join\\(routes\\)\\)\")",
+      "Bash(powershell -Command \"Get-NetTCPConnection -LocalPort 8001 -State Listen | Select-Object OwningProcess\")",
+      "Read(//tmp/**)"
     ]
   }
 }

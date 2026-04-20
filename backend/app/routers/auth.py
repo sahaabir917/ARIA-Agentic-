@@ -16,7 +16,7 @@ from app.config import settings
 from app.database import get_db
 from app.dependencies import get_current_user
 from app.models.user import User
-from app.schemas.auth import AuthResponse, DevLoginRequest, LoginRequest, SignupRequest
+from app.schemas.auth import AuthResponse, DevLoginRequest, LoginRequest, SetPasswordRequest, SignupRequest
 from app.schemas.tenant import TenantCreate
 from app.schemas.user import UserCreate
 from app.services import tenant_service, user_service
@@ -44,6 +44,8 @@ async def signup(body: SignupRequest, db: AsyncSession = Depends(get_db)):
             supabase_uid=body.supabase_uid,
         ),
     )
+    if body.password:
+        user.password_hash = user_service.hash_password(body.password)
     await db.commit()
     await db.refresh(user)
     await db.refresh(tenant)
@@ -76,18 +78,18 @@ async def login(body: LoginRequest, db: AsyncSession = Depends(get_db)):
 
 @router.post("/dev-login", response_model=AuthResponse)
 async def dev_login(body: DevLoginRequest, db: AsyncSession = Depends(get_db)):
-    """Dev-mode login: validates email + DEV_LOGIN_PASSWORD, issues a signed JWT."""
-    if body.password != settings.DEV_LOGIN_PASSWORD:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect password.",
-        )
-
+    """Dev-mode login: validates email + per-user bcrypt password, issues a signed JWT."""
     user = await user_service.get_user_by_email(db, body.email)
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="No account found for this email. Please sign up first.",
+        )
+
+    if not user.password_hash or not user_service.verify_password(body.password, user.password_hash):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect password.",
         )
 
     # Ensure the user has a supabase_uid so the auth middleware can look them up
@@ -106,6 +108,20 @@ async def dev_login(body: DevLoginRequest, db: AsyncSession = Depends(get_db)):
 
     tenant = await tenant_service.get_tenant(db, user.tenant_id)
     return AuthResponse(user=user, tenant=tenant, token=token)
+
+
+@router.post("/set-password", status_code=status.HTTP_204_NO_CONTENT)
+async def set_password(body: SetPasswordRequest, db: AsyncSession = Depends(get_db)):
+    """Bootstrap endpoint: lets existing users set their own password using the shared dev key."""
+    if body.bootstrap_key != settings.DEV_LOGIN_PASSWORD:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid bootstrap key.")
+
+    user = await user_service.get_user_by_email(db, body.email)
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No account found for this email.")
+
+    user.password_hash = user_service.hash_password(body.new_password)
+    await db.commit()
 
 
 @router.get("/me", response_model=AuthResponse)

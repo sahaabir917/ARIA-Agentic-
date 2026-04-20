@@ -32,6 +32,7 @@ PUBLIC_PATHS = {
     "/auth/signup",
     "/auth/login",
     "/auth/dev-login",
+    "/auth/set-password",
 }
 
 
