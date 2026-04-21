@@ -18,6 +18,8 @@ class KBDocument(Base):
     file_type: Mapped[str] = mapped_column(String(10), nullable=False)
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="pending")
     chunk_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    file_size: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    uploaded_by: Mapped[str | None] = mapped_column(String(255), nullable=True)
     department_tag: Mapped[str | None] = mapped_column(String(50), nullable=True)
     error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

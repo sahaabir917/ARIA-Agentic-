@@ -9,7 +9,14 @@
       "Bash(curl -s http://localhost:8001/openapi.json)",
       "Bash(python -c \"import sys,json; routes=[r['summary'] for p,methods in json.load\\(sys.stdin\\)['paths'].items\\(\\) for m,r in methods.items\\(\\)]; print\\('\\\\n'.join\\(routes\\)\\)\")",
       "Bash(powershell -Command \"Get-NetTCPConnection -LocalPort 8001 -State Listen | Select-Object OwningProcess\")",
-      "Read(//tmp/**)"
+      "Read(//tmp/**)",
+      "Read(//c/Users/sahaa/AppData/Local/Packages/PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0/LocalCache/**)",
+      "Bash(powershell -Command ' *)",
+      "Bash(curl -s http://localhost:8002/health)",
+      "Bash(curl -s http://localhost:8002/openapi.json)",
+      "Bash(python3 -c \"import sys,json; paths=json.load\\(sys.stdin\\)['paths']; [print\\(m.upper\\(\\), p\\) for p,v in paths.items\\(\\) for m in v]\")",
+      "Bash(python3.13 -c \"import app; print\\(app.__file__\\)\")",
+      "Bash(python3 -c \"import app; print\\(app.__file__\\)\")"
     ]
   }
 }

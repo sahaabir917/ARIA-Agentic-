@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     OPENAI_API_KEY: str = ""
     GOOGLE_API_KEY: str = ""
     TAVILY_API_KEY: str = ""
+    GROQ_API_KEY: str = ""  # when set, all agents use Groq (testing mode)
 
     # Upload limits
     MAX_UPLOAD_SIZE_MB: int = 50

@@ -24,9 +24,18 @@ app = FastAPI(
 )
 
 # Middleware — order matters: outermost added last
+# CORSMiddleware must be outermost so it adds CORS headers to ALL responses,
+# including 401s from AuthMiddleware (otherwise browser blocks the response entirely).
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 app.add_middleware(SlowAPIMiddleware)
+
+app.add_middleware(
+    TrustedHostMiddleware,
+    allowed_hosts=["*"],
+)
+
+app.add_middleware(AuthMiddleware)
 
 app.add_middleware(
     CORSMiddleware,
@@ -35,13 +44,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-app.add_middleware(
-    TrustedHostMiddleware,
-    allowed_hosts=["*"],
-)
-
-app.add_middleware(AuthMiddleware)
 
 
 # Routers
